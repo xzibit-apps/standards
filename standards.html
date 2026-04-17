@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xzibit App Standard — v1.0</title>
+<link rel="stylesheet" href="./xzibit-design.css">
+<style>
+  /* Docs-site-only styling on top of the standard */
+  body { background: var(--xz-surface-soft); }
+  .docs-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+  .docs-side {
+    background: var(--xz-surface);
+    border-right: 1px solid var(--xz-hairline);
+    padding: var(--xz-s-6) var(--xz-s-5);
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+  }
+  .docs-side .brand {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: var(--xz-s-6);
+  }
+  .docs-side .brand .brand-mark { width: 36px; height: 36px; font-size: 18px; }
+  .docs-side .brand-word { font-weight: 700; font-size: 17px; color: var(--xz-ink); }
+  .docs-side .version {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    color: var(--xz-teal-700);
+    background: var(--xz-teal-50);
+    padding: 2px 8px;
+    border-radius: var(--xz-r-pill);
+    margin-left: 6px;
+  }
+  .toc-label {
+    font-size: 11px; font-weight: 600;
+    color: var(--xz-ink-400);
+    letter-spacing: 0.04em;
+    margin: var(--xz-s-4) 0 6px;
+    padding: 0 10px;
+  }
+  .toc-item {
+    display: block;
+    padding: 7px 10px;
+    font-size: 13px;
+    color: var(--xz-ink-700);
+    text-decoration: none;
+    border-radius: var(--xz-r-sm);
+    transition: background .1s ease, color .1s ease;
+  }
+  .toc-item:hover { background: var(--xz-surface-soft); color: var(--xz-ink); }
+
+  .docs-main { padding: var(--xz-s-8) var(--xz-s-9) var(--xz-s-9); max-width: 1060px; }
+
+  .section { margin-bottom: var(--xz-s-9); scroll-margin-top: var(--xz-s-6); }
+  .section .section-title {
+    font-weight: 700; font-size: 26px; letter-spacing: -0.02em; color: var(--xz-ink);
+    margin-bottom: 6px;
+  }
+  .section .section-lede {
+    font-size: 15px; color: var(--xz-ink-500);
+    margin-bottom: var(--xz-s-5);
+    max-width: 640px;
+  }
+
+  .example {
+    background: var(--xz-surface);
+    border: 1px solid var(--xz-hairline);
+    border-radius: var(--xz-r-lg);
+    padding: var(--xz-s-6);
+    margin-bottom: var(--xz-s-3);
+  }
+
+  .code {
+    background: #0F172A;
+    color: #E2E8F0;
+    border-radius: var(--xz-r-md);
+    padding: var(--xz-s-4);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    position: relative;
+    margin-bottom: var(--xz-s-5);
+  }
+  .code pre { margin: 0; white-space: pre; font-family: inherit; }
+  .code .tok-tag { color: #7DD3FC; }
+  .code .tok-attr { color: #FCA5A5; }
+  .code .tok-str { color: #D8B4FE; }
+  .code-copy {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #E2E8F0;
+    font-family: inherit;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: var(--xz-r-sm);
+    cursor: pointer;
+  }
+  .code-copy:hover { background: rgba(255,255,255,0.15); }
+
+  .install-box {
+    background: linear-gradient(135deg, #EDF2FF 0%, #E8F4F1 60%, #F7EFFF 100%);
+    border: 1px solid rgba(226,232,240,0.6);
+    border-radius: var(--xz-r-xl);
+    padding: var(--xz-s-7);
+    margin-bottom: var(--xz-s-7);
+  }
+  .install-box .h1 { margin-bottom: 10px; }
+
+  /* Swatch grid */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--xz-s-3);
+  }
+  .swatch {
+    background: var(--xz-surface);
+    border: 1px solid var(--xz-hairline);
+    border-radius: var(--xz-r-md);
+    overflow: hidden;
+  }
+  .swatch .block { height: 80px; }
+  .swatch .meta-row { padding: 10px 12px; }
+  .swatch .swatch-name { font-size: 12.5px; font-weight: 600; color: var(--xz-ink); }
+  .swatch .swatch-hex { font-size: 11px; color: var(--xz-ink-400); font-family: ui-monospace, monospace; margin-top: 1px; }
+  .swatch .swatch-var { font-size: 10px; color: var(--xz-ink-400); font-family: ui-monospace, monospace; margin-top: 2px; }
+
+  .status-strip {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--xz-hairline);
+    border-radius: var(--xz-r-md);
+    overflow: hidden;
+  }
+  .status-strip .cell {
+    padding: 12px 14px;
+    border-right: 1px solid var(--xz-hairline);
+    min-height: auto;
+  }
+  .status-strip .cell:last-child { border-right: 0; }
+  .status-strip .cell .hex { font-family: ui-monospace, monospace; font-size: 11px; color: var(--xz-ink-500); }
+  .status-strip .cell .lbl { font-size: 11px; font-weight: 600; color: var(--xz-ink-700); margin-bottom: 4px; }
+  .status-strip .cell .chip { height: 28px; border-radius: 6px; border: 1px solid var(--xz-hairline-soft); }
+
+  .status-family {
+    display: grid; grid-template-columns: 100px 1fr; gap: var(--xz-s-4);
+    margin-bottom: var(--xz-s-3); align-items: center;
+  }
+  .status-family .name {
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    color: var(--xz-ink);
+  }
+  .status-family .name .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* Spacing visualiser */
+  .scale-row {
+    display: flex; align-items: center; gap: var(--xz-s-3);
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--xz-hairline);
+  }
+  .scale-row:last-child { border-bottom: 0; }
+  .scale-row .lbl {
+    width: 60px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--xz-ink-500);
+  }
+  .scale-row .val {
+    width: 70px;
+    font-size: 13px;
+    color: var(--xz-ink);
+    font-weight: 600;
+  }
+  .scale-row .bar {
+    background: var(--xz-teal);
+    height: 8px;
+    border-radius: 4px;
+  }
+
+  /* Radii visualiser */
+  .radii-row { display: flex; gap: 14px; align-items: flex-end; }
+  .radii-row .demo {
+    background: var(--xz-teal-50);
+    border: 2px solid var(--xz-teal);
+    width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--xz-teal-700);
+    font-weight: 600; font-size: 11px;
+    font-family: ui-monospace, monospace;
+  }
+
+  /* Shadow visualiser */
+  .shadow-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--xz-s-4); }
+  .shadow-demo {
+    background: #fff;
+    height: 90px;
+    border-radius: var(--xz-r-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    color: var(--xz-ink-500);
+    font-family: ui-monospace, monospace;
+  }
+
+  /* Component preview grid */
+  .preview-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+
+  /* Mini sidebar demo */
+  .mini-shell {
+    display: grid; grid-template-columns: 200px 1fr;
+    border: 1px solid var(--xz-hairline);
+    border-radius: var(--xz-r-md);
+    overflow: hidden;
+    background: var(--xz-surface);
+    min-height: 320px;
+  }
+  .mini-shell .mini-side {
+    background: var(--xz-surface);
+    border-right: 1px solid var(--xz-hairline);
+    padding: 14px 0;
+    font-size: 12px;
+  }
+  .mini-shell .mini-main {
+    background: var(--xz-surface-soft);
+    padding: 20px;
+  }
+  .mini-shell .nav-item { padding: 8px 14px; font-size: 12px; gap: 8px; }
+  .mini-shell .nav-item.is-active::before { left: 0; top: 6px; bottom: 6px; }
+  .mini-shell .side-brand { padding: 0 14px 16px; margin: 0; }
+  .mini-shell .brand-mark { width: 26px; height: 26px; font-size: 14px; border-radius: 6px; }
+  .mini-shell .brand-word { font-size: 14px; }
+  .mini-shell .side-quick { margin: 0 12px 12px; padding: 8px 12px; font-size: 11px; }
+
+  /* Small helper */
+  .lede-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--xz-r-pill);
+    background: var(--xz-teal-50);
+    color: var(--xz-teal-700);
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* Hide horizontal overflow on mobile */
+  @media (max-width: 880px) {
+    .docs-shell { grid-template-columns: 1fr; }
+    .docs-side { display: none; }
+    .docs-main { padding: var(--xz-s-6); }
+  }
+</style>
+</head>
+<body>
+
+<div class="docs-shell">
+
+  <!-- ========= TOC ========= -->
+  <aside class="docs-side">
+    <div class="brand">
+      <div class="brand-mark">X</div>
+      <div>
+        <div class="brand-word">Xzibit App Standard</div>
+        <span class="version">v1.0</span>
+      </div>
+    </div>
+
+    <div class="toc-label">Start here</div>
+    <a class="toc-item" href="#install">Install</a>
+    <a class="toc-item" href="#principles">Principles</a>
+
+    <div class="toc-label">Tokens</div>
+    <a class="toc-item" href="#colour">Colour</a>
+    <a class="toc-item" href="#status">Status palette</a>
+    <a class="toc-item" href="#type">Typography</a>
+    <a class="toc-item" href="#spacing">Spacing</a>
+    <a class="toc-item" href="#radii">Radii</a>
+    <a class="toc-item" href="#shadows">Shadows</a>
+    <a class="toc-item" href="#layout">Layout</a>
+
+    <div class="toc-label">Components</div>
+    <a class="toc-item" href="#shell">App shell</a>
+    <a class="toc-item" href="#topbar">Top bar</a>
+    <a class="toc-item" href="#buttons">Buttons</a>
+    <a class="toc-item" href="#pills">Status pills</a>
+    <a class="toc-item" href="#shifts">Shift blocks</a>
+    <a class="toc-item" href="#empties">Empty slots</a>
+    <a class="toc-item" href="#cards">Cards &amp; stats</a>
+    <a class="toc-item" href="#tabs">Tabs</a>
+    <a class="toc-item" href="#hero">Hero panel</a>
+    <a class="toc-item" href="#groups">Grouped lists</a>
+    <a class="toc-item" href="#checklist">Checklist</a>
+
+    <div class="toc-label">Ship</div>
+    <a class="toc-item" href="#ship">10-item checklist</a>
+    <a class="toc-item" href="#version">Version history</a>
+  </aside>
+
+  <!-- ========= BODY ========= -->
+  <main class="docs-main">
+
+    <!-- INSTALL -->
+    <section class="section" id="install">
+      <div class="install-box">
+        <span class="lede-pill"><span style="width:6px;height:6px;border-radius:50%;background:var(--xz-teal);"></span> Version 1.0</span>
+        <h1 class="h1">Xzibit App Standard</h1>
+        <p class="subtle">Design system for every Xzibit app — tokens, components, and rules in a single stylesheet. Tied to Brand System v2.0, ConnectTeam-leaning, light-canvas, humanist, pragmatic.</p>
+        <div style="margin-top: var(--xz-s-5); display: flex; gap: 10px;">
+          <a class="btn btn--primary" href="./xzibit-design.css">Stylesheet</a>
+          <a class="btn btn--secondary" href="./tokens.json">tokens.json</a>
+          <a class="btn btn--secondary" href="./CLAUDE.md">CLAUDE.md</a>
+        </div>
+      </div>
+
+      <h2 class="section-title">1 · Install</h2>
+      <p class="section-lede">Add one line to every Xzibit app. The stylesheet ships Inter, the full token set as CSS variables, and every component class. Nothing else needed.</p>
+      <div class="code">
+        <button class="code-copy" data-copy='<link rel="stylesheet" href="https://[YOUR-HOST]/xzibit-design.css">'>Copy</button>
+<pre>&lt;<span class="tok-tag">link</span> <span class="tok-attr">rel</span>=<span class="tok-str">"stylesheet"</span> <span class="tok-attr">href</span>=<span class="tok-str">"https://[YOUR-HOST]/xzibit-design.css"</span>&gt;</pre>
+      </div>
+      <p class="subtle">Swap <code style="background:var(--xz-surface-sub); padding: 2px 6px; border-radius: 4px;">[YOUR-HOST]</code> for wherever the stylesheet is hosted (e.g. <code style="background:var(--xz-surface-sub); padding: 2px 6px; border-radius: 4px;">standards.xzibit-apps.vercel.app</code>).</p>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="section" id="principles">
+      <h2 class="section-title">2 · Principles</h2>
+      <p class="section-lede">Six rules. If a design decision breaks any of these, the decision is wrong.</p>
+      <ul class="checklist">
+        <li><span class="check">✓</span>Light canvas everywhere. White or <code>#F8FAFC</code>. Never dark-mode-default.</li>
+        <li><span class="check">✓</span>Teal <code>#19B1A1</code> is the only brand accent. Primary buttons, active nav, focus rings.</li>
+        <li><span class="check">✓</span>Inter is the only font. Sentence case for every heading.</li>
+        <li><span class="check">✓</span>Six-pastel status family (mint / sky / amber / coral / lilac / sun) for chrome. Charts may extend.</li>
+        <li><span class="check">✓</span>Radii and spacing snap to tokens. No arbitrary pixels.</li>
+        <li><span class="check">✓</span>Dashed outlines for emptiness, pastel + coloured left-border for events.</li>
+      </ul>
+    </section>
+
+    <!-- ========== TOKENS ========== -->
+
+    <section class="section" id="colour">
+      <h2 class="section-title">Colour — brand &amp; neutrals</h2>
+      <p class="section-lede">Accent, ink scale, canvas surfaces, and hairlines. These are the only values used outside the status palette.</p>
+      <div class="swatch-grid">
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-teal);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Teal (brand)</div>
+            <div class="swatch-hex">#19B1A1</div>
+            <div class="swatch-var">--xz-teal</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-teal-600);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Teal 600 (hover)</div>
+            <div class="swatch-hex">#0F8E80</div>
+            <div class="swatch-var">--xz-teal-600</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-teal-50);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Teal 50 (tint)</div>
+            <div class="swatch-hex">#E6F6F3</div>
+            <div class="swatch-var">--xz-teal-50</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-ink);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Ink</div>
+            <div class="swatch-hex">#0F172A</div>
+            <div class="swatch-var">--xz-ink</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-ink-700);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Ink 700 (body)</div>
+            <div class="swatch-hex">#334155</div>
+            <div class="swatch-var">--xz-ink-700</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-ink-500);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Ink 500</div>
+            <div class="swatch-hex">#64748B</div>
+            <div class="swatch-var">--xz-ink-500</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-ink-400);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Ink 400</div>
+            <div class="swatch-hex">#94A3B8</div>
+            <div class="swatch-var">--xz-ink-400</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-surface-soft); border-bottom: 1px solid var(--xz-hairline);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Surface soft</div>
+            <div class="swatch-hex">#F8FAFC</div>
+            <div class="swatch-var">--xz-surface-soft</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-surface);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Surface</div>
+            <div class="swatch-hex">#FFFFFF</div>
+            <div class="swatch-var">--xz-surface</div>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="block" style="background: var(--xz-hairline);"></div>
+          <div class="meta-row">
+            <div class="swatch-name">Hairline</div>
+            <div class="swatch-hex">#E2E8F0</div>
+            <div class="swatch-var">--xz-hairline</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATUS PALETTE -->
+    <section class="section" id="status">
+      <h2 class="section-title">Status palette</h2>
+      <p class="section-lede">Six pastels, each at three weights. Use <strong>-50</strong> for background fills, <strong>-500</strong> for the border/dot, <strong>-700</strong> for text. Pick semantically, not visually.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-mint-500);"></span>Mint / teal</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-mint-50);"></div><div class="hex">#E6F6F3</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-mint-500);"></div><div class="hex">#19B1A1</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-mint-700);"></div><div class="hex">#0F8E80</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">Confirmed, on-track, live, active, good.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-sky-500);"></span>Sky</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-sky-50);"></div><div class="hex">#EAF3FF</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-sky-500);"></div><div class="hex">#3B82F6</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-sky-700);"></div><div class="hex">#1D4ED8</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">Pencilled, scheduled, informational.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-amber-500);"></span>Amber</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-amber-50);"></div><div class="hex">#FEF3C7</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-amber-500);"></div><div class="hex">#F59E0B</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-amber-700);"></div><div class="hex">#B45309</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">At risk, pending action, needs attention.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-coral-500);"></span>Coral</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-coral-50);"></div><div class="hex">#FFE4E0</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-coral-500);"></div><div class="hex">#F87171</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-coral-700);"></div><div class="hex">#B91C1C</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">Conflict, blocked, overdue, vacation, unavailable.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-lilac-500);"></span>Lilac</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-lilac-50);"></div><div class="hex">#EDE9FE</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-lilac-500);"></div><div class="hex">#8B5CF6</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-lilac-700);"></div><div class="hex">#5B21B6</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">Design, creative, project-level activity.</p>
+
+      <div class="status-family">
+        <div class="name"><span class="dot" style="background: var(--xz-sun-500);"></span>Sun</div>
+        <div class="status-strip">
+          <div class="cell"><div class="lbl">50</div><div class="chip" style="background: var(--xz-sun-50);"></div><div class="hex">#FFF7D6</div></div>
+          <div class="cell"><div class="lbl">500</div><div class="chip" style="background: var(--xz-sun-500);"></div><div class="hex">#EAB308</div></div>
+          <div class="cell"><div class="lbl">700</div><div class="chip" style="background: var(--xz-sun-700);"></div><div class="hex">#854D0E</div></div>
+        </div>
+      </div>
+      <p class="meta" style="margin: 0 0 var(--xz-s-4) 100px;">Warehouse, logistics, internal operations.</p>
+    </section>
+
+    <!-- TYPE -->
+    <section class="section" id="type">
+      <h2 class="section-title">Typography</h2>
+      <p class="section-lede">Inter across the board. Sentence case for all headings. The only uppercase element is the small <code>.step</code> eyebrow label.</p>
+      <div class="example">
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">H1 / 30</span><span class="h1">Build this week's roster</span></div>
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">H2 / 22</span><span class="h2">Today's shifts</span></div>
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">H3 / 16</span><span class="h3">Team status</span></div>
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">Body / 14</span><span style="color: var(--xz-ink-700);">Inter at 14 / 1.55 for app UI. Dark ink on warm off-white for readability.</span></div>
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">Subtle / 14</span><span class="subtle">Secondary body copy — used for descriptions.</span></div>
+        <div style="margin-bottom: 14px;"><span class="meta" style="margin-right:14px;">Meta / 12</span><span class="meta">Meta — last saved 2 min ago by Joel</span></div>
+        <div><span class="meta" style="margin-right:14px;">Step</span><span class="step"><span>Step 1</span><span class="bar"></span><span class="gray">Planning</span></span></div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<h1 class="h1">Build this week&apos;s roster</h1>&#10;<p class="subtle">Five crew, three live jobs.</p>&#10;<div class="step"><span>Step 1</span><span class="bar"></span><span class="gray">Planning</span></div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">h1</span> <span class="tok-attr">class</span>=<span class="tok-str">"h1"</span>&gt;Build this week's roster&lt;/<span class="tok-tag">h1</span>&gt;
+&lt;<span class="tok-tag">p</span> <span class="tok-attr">class</span>=<span class="tok-str">"subtle"</span>&gt;Five crew, three live jobs.&lt;/<span class="tok-tag">p</span>&gt;
+&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"step"</span>&gt;&lt;<span class="tok-tag">span</span>&gt;Step 1&lt;/<span class="tok-tag">span</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"bar"</span>&gt;&lt;/<span class="tok-tag">span</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"gray"</span>&gt;Planning&lt;/<span class="tok-tag">span</span>&gt;&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- SPACING -->
+    <section class="section" id="spacing">
+      <h2 class="section-title">Spacing scale</h2>
+      <p class="section-lede">4/8 ladder. Always pick a token — don't use arbitrary values.</p>
+      <div class="example">
+        <div class="scale-row"><span class="lbl">--xz-s-1</span><span class="val">4px</span><span class="bar" style="width: 4px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-2</span><span class="val">8px</span><span class="bar" style="width: 8px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-3</span><span class="val">12px</span><span class="bar" style="width: 12px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-4</span><span class="val">16px</span><span class="bar" style="width: 16px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-5</span><span class="val">20px</span><span class="bar" style="width: 20px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-6</span><span class="val">24px</span><span class="bar" style="width: 24px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-7</span><span class="val">32px</span><span class="bar" style="width: 32px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-8</span><span class="val">48px</span><span class="bar" style="width: 48px;"></span></div>
+        <div class="scale-row"><span class="lbl">--xz-s-9</span><span class="val">64px</span><span class="bar" style="width: 64px;"></span></div>
+      </div>
+    </section>
+
+    <!-- RADII -->
+    <section class="section" id="radii">
+      <h2 class="section-title">Radii</h2>
+      <p class="section-lede">Six values. Everything snaps to one of them.</p>
+      <div class="example">
+        <div class="radii-row">
+          <div class="demo" style="border-radius: var(--xz-r-xs);">xs · 6</div>
+          <div class="demo" style="border-radius: var(--xz-r-sm);">sm · 8</div>
+          <div class="demo" style="border-radius: var(--xz-r-md);">md · 12</div>
+          <div class="demo" style="border-radius: var(--xz-r-lg);">lg · 16</div>
+          <div class="demo" style="border-radius: var(--xz-r-xl);">xl · 20</div>
+          <div class="demo" style="border-radius: var(--xz-r-pill); width: 120px;">pill</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHADOWS -->
+    <section class="section" id="shadows">
+      <h2 class="section-title">Shadows</h2>
+      <p class="section-lede">Soft. Cards use <code>sm</code>. Floating tooltips use <code>float</code>. Primary buttons use <code>teal</code>.</p>
+      <div class="example" style="background: var(--xz-surface-soft);">
+        <div class="shadow-row">
+          <div class="shadow-demo" style="box-shadow: var(--xz-shadow-sm);">sm</div>
+          <div class="shadow-demo" style="box-shadow: var(--xz-shadow-md);">md</div>
+          <div class="shadow-demo" style="box-shadow: var(--xz-shadow-lg);">lg</div>
+          <div class="shadow-demo" style="box-shadow: var(--xz-shadow-float);">float</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAYOUT -->
+    <section class="section" id="layout">
+      <h2 class="section-title">Layout tokens</h2>
+      <p class="section-lede">Fixed dimensions for the three structural elements of every app.</p>
+      <div class="example" style="padding: 0;">
+        <div style="padding: var(--xz-s-5); display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--xz-s-4);">
+          <div>
+            <div class="meta">--xz-side-w</div>
+            <div class="h3" style="margin-top: 4px;">248px</div>
+            <div class="meta">Sidebar width</div>
+          </div>
+          <div>
+            <div class="meta">--xz-topbar-h</div>
+            <div class="h3" style="margin-top: 4px;">72px</div>
+            <div class="meta">Top bar height</div>
+          </div>
+          <div>
+            <div class="meta">--xz-content-max</div>
+            <div class="h3" style="margin-top: 4px;">1320px</div>
+            <div class="meta">Max content width</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== COMPONENTS ========== -->
+
+    <!-- SHELL -->
+    <section class="section" id="shell">
+      <h2 class="section-title">App shell</h2>
+      <p class="section-lede">White sidebar, soft grey canvas, sticky top bar. Sidebar sticks on scroll. Every Xzibit app follows this.</p>
+      <div class="example" style="padding: 0;">
+        <div class="mini-shell">
+          <aside class="mini-side">
+            <div class="side-brand">
+              <div class="brand-mark">X</div>
+              <div class="brand-word">Xzibit</div>
+            </div>
+            <button class="side-quick"><span class="plus">+</span> New</button>
+            <div class="nav-item is-active"><span class="nav-icon">▦</span> Dashboard</div>
+            <div class="nav-item"><span class="nav-icon">▤</span> Projects</div>
+            <div class="nav-item"><span class="nav-icon">◐</span> Time</div>
+          </aside>
+          <div class="mini-main">
+            <span class="step"><span>Step 1</span><span class="bar"></span><span class="gray">Planning</span></span>
+            <div class="h1" style="margin-top: 10px; font-size: 22px;">Page goes here</div>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="shell">&#10;  <aside class="side">...</aside>&#10;  <main class="main">&#10;    <div class="topbar">...</div>&#10;    <div class="page">...</div>&#10;  </main>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"shell"</span>&gt;
+  &lt;<span class="tok-tag">aside</span> <span class="tok-attr">class</span>=<span class="tok-str">"side"</span>&gt;...&lt;/<span class="tok-tag">aside</span>&gt;
+  &lt;<span class="tok-tag">main</span> <span class="tok-attr">class</span>=<span class="tok-str">"main"</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"topbar"</span>&gt;...&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"page"</span>&gt;...&lt;/<span class="tok-tag">div</span>&gt;
+  &lt;/<span class="tok-tag">main</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- TOPBAR -->
+    <section class="section" id="topbar">
+      <h2 class="section-title">Top bar</h2>
+      <p class="section-lede">72px, sticky, white background, hairline bottom border. Title on the left, actions on the right.</p>
+      <div class="example" style="padding: 0;">
+        <div class="topbar" style="position: static; padding: 0 var(--xz-s-5);">
+          <div class="topbar-title">
+            <div class="h3">Team schedule</div>
+            <span class="pill-live"><span class="dot"></span> Live</span>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-btn" title="Notifications">◔</button>
+            <button class="btn btn--secondary">Share</button>
+            <button class="btn btn--primary">+ New</button>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="topbar">&#10;  <div class="topbar-title">&#10;    <div class="h3">Team schedule</div>&#10;    <span class="pill-live"><span class="dot"></span> Live</span>&#10;  </div>&#10;  <div class="topbar-actions">&#10;    <button class="icon-btn">◔</button>&#10;    <button class="btn btn--primary">+ New</button>&#10;  </div>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"topbar"</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"topbar-title"</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"h3"</span>&gt;Team schedule&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"pill-live"</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"dot"</span>&gt;&lt;/<span class="tok-tag">span</span>&gt; Live&lt;/<span class="tok-tag">span</span>&gt;
+  &lt;/<span class="tok-tag">div</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"topbar-actions"</span>&gt;
+    &lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"icon-btn"</span>&gt;◔&lt;/<span class="tok-tag">button</span>&gt;
+    &lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"btn btn--primary"</span>&gt;+ New&lt;/<span class="tok-tag">button</span>&gt;
+  &lt;/<span class="tok-tag">div</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="section" id="buttons">
+      <h2 class="section-title">Buttons</h2>
+      <p class="section-lede">Three variants. Primary has the soft teal shadow — one primary per page, maximum.</p>
+      <div class="example">
+        <div class="preview-row">
+          <button class="btn btn--primary">Primary</button>
+          <button class="btn btn--secondary">Secondary</button>
+          <button class="btn btn--ghost">Ghost</button>
+          <button class="icon-btn">◔</button>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<button class="btn btn--primary">Primary</button>&#10;<button class="btn btn--secondary">Secondary</button>&#10;<button class="btn btn--ghost">Ghost</button>&#10;<button class="icon-btn">◔</button>'>Copy</button>
+<pre>&lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"btn btn--primary"</span>&gt;Primary&lt;/<span class="tok-tag">button</span>&gt;
+&lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"btn btn--secondary"</span>&gt;Secondary&lt;/<span class="tok-tag">button</span>&gt;
+&lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"btn btn--ghost"</span>&gt;Ghost&lt;/<span class="tok-tag">button</span>&gt;
+&lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"icon-btn"</span>&gt;◔&lt;/<span class="tok-tag">button</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- PILLS -->
+    <section class="section" id="pills">
+      <h2 class="section-title">Status pills</h2>
+      <p class="section-lede">One per semantic state. Pick by meaning, not hue.</p>
+      <div class="example">
+        <div class="preview-row">
+          <span class="pill pill--mint"><span class="dot"></span>Confirmed</span>
+          <span class="pill pill--sky"><span class="dot"></span>Pencilled</span>
+          <span class="pill pill--amber"><span class="dot"></span>At risk</span>
+          <span class="pill pill--coral"><span class="dot"></span>Conflict</span>
+          <span class="pill pill--lilac"><span class="dot"></span>Design</span>
+          <span class="pill pill--sun"><span class="dot"></span>Warehouse</span>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<span class="pill pill--mint"><span class="dot"></span>Confirmed</span>'>Copy</button>
+<pre>&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"pill pill--mint"</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"dot"</span>&gt;&lt;/<span class="tok-tag">span</span>&gt;Confirmed&lt;/<span class="tok-tag">span</span>&gt;
+&lt;!-- variants: pill--sky pill--amber pill--coral pill--lilac pill--sun --&gt;</pre>
+      </div>
+    </section>
+
+    <!-- SHIFT BLOCKS -->
+    <section class="section" id="shifts">
+      <h2 class="section-title">Shift blocks</h2>
+      <p class="section-lede">Core pattern for calendar cells, event lists, task items. 4px coloured left border + 50-weight pastel fill + 10px radius.</p>
+      <div class="example">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div class="shift">
+            <div class="time">09:00 – 17:00</div>
+            <div class="label">Confirmed shift · Melbourne Show</div>
+          </div>
+          <div class="shift shift--sky">
+            <div class="time">08:00 – 18:00</div>
+            <div class="label">Pencilled · Olympic Park</div>
+          </div>
+          <div class="shift shift--amber">
+            <div class="time">10:00 – 20:00</div>
+            <div class="label">At risk · awaiting confirm</div>
+          </div>
+          <div class="shift shift--coral">
+            <div class="time">All day</div>
+            <div class="label">Vacation</div>
+          </div>
+          <div class="shift shift--lilac">
+            <div class="time">09:00 – 13:00</div>
+            <div class="label">Design · client review</div>
+          </div>
+          <div class="shift shift--sun">
+            <div class="time">08:00 – 12:00</div>
+            <div class="label">Pack · Warehouse</div>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="shift">&#10;  <div class="time">09:00 – 17:00</div>&#10;  <div class="label">Confirmed shift · Melbourne Show</div>&#10;</div>&#10;<!-- variants: shift--sky shift--amber shift--coral shift--lilac shift--sun -->'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"shift"</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"time"</span>&gt;09:00 – 17:00&lt;/<span class="tok-tag">div</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"label"</span>&gt;Confirmed shift · Melbourne Show&lt;/<span class="tok-tag">div</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;
+&lt;!-- variants: shift--sky shift--amber shift--coral shift--lilac shift--sun --&gt;</pre>
+      </div>
+    </section>
+
+    <!-- EMPTY SLOTS -->
+    <section class="section" id="empties">
+      <h2 class="section-title">Empty slots</h2>
+      <p class="section-lede">Dashed outline turns teal on hover. Use anywhere emptiness is actionable — open shifts, unassigned tasks, placeholder cells.</p>
+      <div class="example">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div class="empty"><span class="plus">+</span> Add shift</div>
+          <div class="empty"><span class="plus">+</span> Assign crew</div>
+          <div class="empty"><span class="plus">+</span> New task</div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="empty"><span class="plus">+</span> Add shift</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"empty"</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"plus"</span>&gt;+&lt;/<span class="tok-tag">span</span>&gt; Add shift&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- CARDS / STATS -->
+    <section class="section" id="cards">
+      <h2 class="section-title">Cards &amp; stats</h2>
+      <p class="section-lede">White background, hairline border, soft shadow, 16px radius. Stats add a 4px coloured stripe on the left edge.</p>
+      <div class="example">
+        <div class="stat-row">
+          <div class="stat mint">
+            <div class="stripe"></div>
+            <div class="label">Confirmed shifts</div>
+            <div class="value">18</div>
+            <div class="delta up">↑ 3 from last week</div>
+          </div>
+          <div class="stat sky">
+            <div class="stripe"></div>
+            <div class="label">Pencilled in</div>
+            <div class="value">4</div>
+          </div>
+          <div class="stat amber">
+            <div class="stripe"></div>
+            <div class="label">At risk</div>
+            <div class="value">2</div>
+          </div>
+          <div class="stat coral">
+            <div class="stripe"></div>
+            <div class="label">Open shifts</div>
+            <div class="value">3</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 16px;">
+          <div class="card-eyebrow">Section label</div>
+          <div class="card-title">Card title</div>
+          <p class="subtle">Body copy goes here.</p>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="stat-row">&#10;  <div class="stat mint">&#10;    <div class="stripe"></div>&#10;    <div class="label">Confirmed shifts</div>&#10;    <div class="value">18</div>&#10;  </div>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"stat-row"</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"stat mint"</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"stripe"</span>&gt;&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"label"</span>&gt;Confirmed shifts&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"value"</span>&gt;18&lt;/<span class="tok-tag">div</span>&gt;
+  &lt;/<span class="tok-tag">div</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <section class="section" id="tabs">
+      <h2 class="section-title">Tabs</h2>
+      <p class="section-lede">Pill segmented. Active tab is solid near-black with white text.</p>
+      <div class="example">
+        <div class="tabs">
+          <button class="tab is-active">Week view</button>
+          <button class="tab">Day list</button>
+          <button class="tab">Team status</button>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="tabs">&#10;  <button class="tab is-active">Week view</button>&#10;  <button class="tab">Day list</button>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"tabs"</span>&gt;
+  &lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"tab is-active"</span>&gt;Week view&lt;/<span class="tok-tag">button</span>&gt;
+  &lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"tab"</span>&gt;Day list&lt;/<span class="tok-tag">button</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- HERO -->
+    <section class="section" id="hero">
+      <h2 class="section-title">Hero panel</h2>
+      <p class="section-lede">Soft gradient intro for dashboards, landing screens, and step-one pages. Big sentence-case headline, one-line lede, primary + secondary action.</p>
+      <div class="example">
+        <div class="hero">
+          <div>
+            <div class="step"><span>Step 1</span><span class="bar"></span><span class="gray">Planning</span></div>
+            <h1 class="h1">Build this week's roster in minutes</h1>
+            <p class="subtle">Drag shifts onto open slots, auto-resolve conflicts, then publish.</p>
+            <div class="hero-actions">
+              <button class="btn btn--primary">Publish roster</button>
+              <button class="btn btn--secondary">Duplicate last week</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="hero">&#10;  <div>&#10;    <div class="step"><span>Step 1</span><span class="bar"></span><span class="gray">Planning</span></div>&#10;    <h1 class="h1">Sentence case headline</h1>&#10;    <p class="subtle">One-line context sentence.</p>&#10;    <div class="hero-actions">&#10;      <button class="btn btn--primary">Primary</button>&#10;      <button class="btn btn--secondary">Secondary</button>&#10;    </div>&#10;  </div>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"hero"</span>&gt;
+  &lt;<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"step"</span>&gt;&lt;<span class="tok-tag">span</span>&gt;Step 1&lt;/<span class="tok-tag">span</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"bar"</span>&gt;&lt;/<span class="tok-tag">span</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"gray"</span>&gt;Planning&lt;/<span class="tok-tag">span</span>&gt;&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">h1</span> <span class="tok-attr">class</span>=<span class="tok-str">"h1"</span>&gt;Sentence case headline&lt;/<span class="tok-tag">h1</span>&gt;
+    &lt;<span class="tok-tag">p</span> <span class="tok-attr">class</span>=<span class="tok-str">"subtle"</span>&gt;One-line context sentence.&lt;/<span class="tok-tag">p</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"hero-actions"</span>&gt;
+      &lt;<span class="tok-tag">button</span> <span class="tok-attr">class</span>=<span class="tok-str">"btn btn--primary"</span>&gt;Primary&lt;/<span class="tok-tag">button</span>&gt;
+    &lt;/<span class="tok-tag">div</span>&gt;
+  &lt;/<span class="tok-tag">div</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- GROUPS -->
+    <section class="section" id="groups">
+      <h2 class="section-title">Grouped lists</h2>
+      <p class="section-lede">Collapsible section header + rows. Use for Today / Upcoming / Open patterns, any grouped table.</p>
+      <div class="example" style="padding: 0;">
+        <div class="group" style="margin: 0;">
+          <div class="group-head">
+            <div class="title">
+              <span class="chev">▾</span>
+              <span class="title-text">Today · Wednesday, 22 April</span>
+            </div>
+            <span class="count">7 shifts</span>
+          </div>
+          <div class="row">
+            <div>Chloe Ramirez <span class="meta" style="display:block;">Design · Stand concept</span></div>
+            <div>09:00 – 13:00</div>
+            <div>Zoom</div>
+            <div><span class="pill pill--mint"><span class="dot"></span>Confirmed</span></div>
+            <div style="text-align:right;"><button class="btn btn--ghost">Open</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<div class="group">&#10;  <div class="group-head">&#10;    <div class="title"><span class="chev">▾</span><span class="title-text">Today</span></div>&#10;    <span class="count">7 shifts</span>&#10;  </div>&#10;  <div class="row">...</div>&#10;</div>'>Copy</button>
+<pre>&lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"group"</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"group-head"</span>&gt;
+    &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"title"</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"chev"</span>&gt;▾&lt;/<span class="tok-tag">span</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"title-text"</span>&gt;Today&lt;/<span class="tok-tag">span</span>&gt;&lt;/<span class="tok-tag">div</span>&gt;
+    &lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"count"</span>&gt;7 shifts&lt;/<span class="tok-tag">span</span>&gt;
+  &lt;/<span class="tok-tag">div</span>&gt;
+  &lt;<span class="tok-tag">div</span> <span class="tok-attr">class</span>=<span class="tok-str">"row"</span>&gt;...&lt;/<span class="tok-tag">div</span>&gt;
+&lt;/<span class="tok-tag">div</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- CHECKLIST -->
+    <section class="section" id="checklist">
+      <h2 class="section-title">Checklist</h2>
+      <p class="section-lede">Teal tick bullets, not discs. Use for feature lists, onboarding tasks, pre-flight checks.</p>
+      <div class="example">
+        <ul class="checklist">
+          <li><span class="check">✓</span>Full visibility into crew availability</li>
+          <li><span class="check">✓</span>Auto-fill shifts based on preferences</li>
+          <li><span class="check">✓</span>Publish to team phones in one tap</li>
+        </ul>
+      </div>
+      <div class="code">
+        <button class="code-copy" data-copy='<ul class="checklist">&#10;  <li><span class="check">✓</span>Item</li>&#10;</ul>'>Copy</button>
+<pre>&lt;<span class="tok-tag">ul</span> <span class="tok-attr">class</span>=<span class="tok-str">"checklist"</span>&gt;
+  &lt;<span class="tok-tag">li</span>&gt;&lt;<span class="tok-tag">span</span> <span class="tok-attr">class</span>=<span class="tok-str">"check"</span>&gt;✓&lt;/<span class="tok-tag">span</span>&gt;Item&lt;/<span class="tok-tag">li</span>&gt;
+&lt;/<span class="tok-tag">ul</span>&gt;</pre>
+      </div>
+    </section>
+
+    <!-- SHIP CHECKLIST -->
+    <section class="section" id="ship">
+      <h2 class="section-title">Before you ship</h2>
+      <p class="section-lede">Run this against every new build. If anything is missing or wrong, fix it before publishing.</p>
+      <div class="card">
+        <ul class="checklist">
+          <li><span class="check">✓</span>Stylesheet <code>&lt;link&gt;</code> to <code>xzibit-design.css</code> is the first CSS loaded.</li>
+          <li><span class="check">✓</span>Canvas is white or <code>#F8FAFC</code>. Sidebar is white with 1px hairline right border.</li>
+          <li><span class="check">✓</span>Inter is the single font. No League Spartan in body copy.</li>
+          <li><span class="check">✓</span>Headings are sentence case. No ALL CAPS except small <code>.step</code> eyebrow labels.</li>
+          <li><span class="check">✓</span>Teal <code>#19B1A1</code> is the single brand accent — primary button, active nav, focus rings.</li>
+          <li><span class="check">✓</span>Status uses the six-pastel family only. No bespoke reds, greens, blues in chrome.</li>
+          <li><span class="check">✓</span>Shift blocks use 4px coloured left border + pastel-50 fill + 10px radius.</li>
+          <li><span class="check">✓</span>Empty slots are 1.5px dashed outlines that turn teal on hover.</li>
+          <li><span class="check">✓</span>Buttons are pill-shaped. Primary has the soft teal shadow.</li>
+          <li><span class="check">✓</span>All radii snap to tokens. All spacing snaps to the 4/8 ladder.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- VERSION -->
+    <section class="section" id="version">
+      <h2 class="section-title">Version</h2>
+      <div class="card">
+        <div class="card-eyebrow">v1.0.0 · April 2026</div>
+        <div class="card-title">First public standard</div>
+        <p class="subtle" style="margin-top: 8px;">Light-canvas, ConnectTeam-leaning interpretation of Brand System v2.0. Retires the dark-first demo, replaces League Spartan in app UI with Inter, commits to the six-pastel status family.</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Copy buttons
+  document.querySelectorAll('.code-copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.dataset.copy || '';
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        setTimeout(() => btn.textContent = original, 1200);
+      }).catch(() => {
+        btn.textContent = 'Press Ctrl+C';
+      });
+    });
+  });
+
+  // Smooth-scroll TOC
+  document.querySelectorAll('.toc-item').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const href = a.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
