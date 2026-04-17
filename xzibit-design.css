@@ -1,7 +1,7 @@
 /* =========================================================
    XZIBIT APP STANDARD — v1.0
    Single stylesheet. Import once, use everywhere.
-   <link rel="stylesheet" href="https://[YOUR-HOST]/xzibit-design.css">
+   <link rel="stylesheet" href="https://xzibit-standards.vercel.app/xzibit-design.css">
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');

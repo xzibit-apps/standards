@@ -3,11 +3,11 @@
 This file tells AI coding tools (Claude Code, Manus, Cursor, etc.) how to build Xzibit apps so they look and feel consistent. Drop a copy into every Xzibit app repo. For Manus, paste the contents in as the first message of any new build.
 
 **Authoritative sources:**
-- Live stylesheet: `https://[YOUR-HOST]/xzibit-design.css`
-- Token file: `https://[YOUR-HOST]/tokens.json`
-- Visual reference: `https://[YOUR-HOST]/standards.html`
+- Live stylesheet: `https://xzibit-standards.vercel.app/xzibit-design.css`
+- Token file: `https://xzibit-standards.vercel.app/tokens.json`
+- Visual reference: `https://xzibit-standards.vercel.app/`
 
-Swap `[YOUR-HOST]` for wherever you host the standards (e.g. `standards.xzibit-apps.vercel.app`).
+Swap `xzibit-standards.vercel.app` for wherever you host the standards (e.g. `standards.xzibit-apps.vercel.app`).
 
 ---
 
@@ -22,7 +22,7 @@ Every Xzibit app imports `xzibit-design.css`, uses the component classes it defi
 Put this in the `<head>`:
 
 ```html
-<link rel="stylesheet" href="https://[YOUR-HOST]/xzibit-design.css">
+<link rel="stylesheet" href="https://xzibit-standards.vercel.app/xzibit-design.css">
 ```
 
 This single line loads Inter (via Google Fonts), the full token set as CSS variables (`--xz-*`), and every component class. Nothing else is needed.
