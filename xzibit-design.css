@@ -12,6 +12,7 @@
   --xz-teal-600:  #0F8E80;
   --xz-teal-50:   #E6F6F3;
   --xz-teal-100:  #CFEDE8;
+  --xz-teal-700:  #0A7060;   /* darker teal for text on teal-50 / nav active */
 
   /* ---------- INK (text on light) ---------- */
   --xz-ink:       #0F172A;   /* headings / strong text */
