@@ -5,6 +5,8 @@
 **Source of truth for the day-to-day:** `kb_decisions`, `kb_naming`, `kb_systems` in Supabase.
 **This doc:** the 6-month arc — sequencing, ownership, and why. It should be re-read every 4-6 weeks and superseded by a `kb_decisions` entry when the plan changes.
 
+**Working protocol:** see `working-protocol.md` in this folder for the repo-is-the-record rule (Cowork decides and writes it down, Claude Code reads it and builds) and the Tier 1/2/3 build standard every app is held to.
+
 ---
 
 ## Guiding principles
@@ -15,6 +17,7 @@
 4. **Additive migrations, reversible.** No destructive changes. Every migration goes through `supabase migrations` (or the MCP `apply_migration`) and lives in-repo.
 5. **Decisions land in `kb_decisions`.** Architecture moves through ADRs, not Slack. Naming renames live in `kb_naming`. Every sprint closes its own kb_decisions entry.
 6. **Xzibit App Standard v1.0 is the UI contract.** Every app loads `xzibit-standards.vercel.app/xzibit-design.css` and uses its component classes. No bespoke styling.
+7. **Tier 1 is mandatory for every app, framework and host are not.** Service-role DB access behind a route guard, migrations as files, a complete `.env.example`, and a current `CLAUDE.md` apply everywhere — including Team Schedule on Rails/Railway. See `working-protocol.md`.
 
 These aren't new — they're extracted from the decisions and sprints that have already landed. This doc just makes them explicit for the next 6 months.
 
