@@ -338,6 +338,7 @@ Priority (worst off-brand → already on-brand):
 
 This app is part of the Xzibit Apps portfolio — a set of standalone Next.js / Rails apps sharing one Supabase project (`xzibit-apps`, id `rklzgzyqbajhpjvixlkr`). Architecture is documented centrally. **Read these first before any schema, API, or cross-app change:**
 
+- **Working protocol (repo-is-the-record + tiered standard):** https://raw.githubusercontent.com/xzibit-apps/standards/main/docs/architecture/working-protocol.md
 - **Portfolio roadmap:** https://raw.githubusercontent.com/xzibit-apps/standards/main/docs/architecture/portfolio-roadmap.md
 - **Shared-DB guide:** https://raw.githubusercontent.com/xzibit-apps/standards/main/docs/architecture/shared-db-guide.md
 - **Architectural decisions:** query `public.kb_decisions` in Supabase (50+ accepted ADRs). The ones most relevant to this portfolio baseline:
@@ -355,9 +356,17 @@ This app is part of the Xzibit Apps portfolio — a set of standalone Next.js / 
 
 ### Non-negotiable rules
 
-1. Every schema change lands as an **additive, reversible** migration file in this repo. No DDL via the Supabase dashboard.
-2. Every `/api/*` route that reads or writes must verify a signed JWT (Auth Correctness Sprint in progress).
+1. Every schema change lands as an **additive, reversible** migration file, in `supabase/migrations/` in this repo — nowhere else. No DDL via the Supabase dashboard.
+2. Every `/api/*` route that reads or writes must verify a signed JWT and use the service-role client behind that route guard — never the browser/anon key for writes (Auth Correctness Sprint in progress).
 3. New shared concepts start with a `kb_decisions` ADR, not a new table.
 4. Use the Xzibit App Standard CSS only — no bespoke colours or components.
+5. `.env.example` lists every variable this app reads, with placeholders only — never a real value.
+6. This `CLAUDE.md` stays current. It's the handoff point between Cowork (decisions) and Claude Code (builds) — see the working protocol doc linked above.
 
 If anything here contradicts what's in `kb_decisions`, **`kb_decisions` wins** — flag it to Joel and pause.
+
+### Tiered standard (full detail in `docs/architecture/working-protocol.md`)
+
+- **Tier 1 — mandatory for every app:** service-role DB access behind a route guard, schema changes as migration files only, a complete `.env.example`, a current `CLAUDE.md`.
+- **Tier 2 — apps in active development:** shared `@xzibit/ui` + `@xzibit/app-kit`, tests on anything that produces a number, a documented deploy process.
+- **Tier 3 — framework and host: not mandatory.** Team Schedule stays on Rails/Railway. Working apps don't get rewritten for tidiness.
