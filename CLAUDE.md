@@ -334,6 +334,30 @@ Priority (worst off-brand → already on-brand):
 
 ---
 
+## Tiered Build Standard
+
+Set by Joel, 2026-09-09. This is a separate axis from the visual standard above — it governs how an app is *built*, not how it *looks*. It applies to every Xzibit app, this one included. This section and `xzibit-app-template` are updated together whenever the standard changes; neither is authoritative alone.
+
+**The repo is the record, not the chat.** A Cowork session does strategy and writes decisions into a file in the repo — usually this `CLAUDE.md`. A Claude Code session reads that file, builds, and writes results back to it. If a decision only exists in a chat session, it does not exist. Keep `CLAUDE.md` current in every repo you touch — that is the handoff point between planning and building.
+
+**Tier 1 — mandatory for every app, no exceptions:**
+1. Database access via service role behind a route guard — never a browser key. Service-role credentials never ship to the client; every privileged read or write goes through a server route that verifies the caller first.
+2. Schema changes land as versioned migration files committed to the repo (`supabase/migrations/` for Next.js/Supabase apps; the framework's native migration folder otherwise — e.g. `db/migrate/` for Rails). No ad-hoc DDL run directly against the database, ever.
+3. `.env.example` lists every environment variable the app uses, with no real values.
+4. A current `CLAUDE.md` in the repo.
+
+**Tier 2 — for apps in active development:**
+- Shared `@xzibit/ui` and `@xzibit/app-kit` (see `xzibit-app-template`'s packages table) — improvements propagate by version bump, never forked into the app.
+- Tests on anything that produces a number.
+- A documented deploy process.
+
+**Tier 3 — framework and host — not mandatory:**
+- No requirement to standardize on Next.js/Vercel or any particular stack. Team Schedule stays on Rails/Railway. Working apps are not rewritten for tidiness.
+
+When auditing an app, check it against Tier 1 at minimum; check Tier 2 only if the app is under active development. Don't propose Tier 3 (framework/host) changes as part of "bringing an app up to standard."
+
+---
+
 ## Xzibit portfolio context (read before any DB or API changes)
 
 This app is part of the Xzibit Apps portfolio — a set of standalone Next.js / Rails apps sharing one Supabase project (`xzibit-apps`, id `rklzgzyqbajhpjvixlkr`). Architecture is documented centrally. **Read these first before any schema, API, or cross-app change:**
@@ -354,6 +378,8 @@ This app is part of the Xzibit Apps portfolio — a set of standalone Next.js / 
 - **Must never write** to any `public.*` table this app doesn't own. Cross-app writes happen through the owning app's admin UI (usually the Launcher), not direct SQL.
 
 ### Non-negotiable rules
+
+These are Tier 1 of the Tiered Build Standard above, applied to this app specifically:
 
 1. Every schema change lands as an **additive, reversible** migration file in this repo. No DDL via the Supabase dashboard.
 2. Every `/api/*` route that reads or writes must verify a signed JWT (Auth Correctness Sprint in progress).
